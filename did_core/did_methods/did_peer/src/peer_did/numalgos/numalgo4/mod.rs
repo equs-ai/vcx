@@ -122,13 +122,14 @@ impl PeerDid<Numalgo4> {
 #[cfg(test)]
 mod tests {
     use std::collections::HashMap;
-
+    use url::Url;
     use did_doc::schema::{
         service::{service_key_kind::ServiceKeyKind, typed::ServiceType, Service},
         types::uri::Uri,
         utils::OneOrList,
         verification_method::{PublicKeyField, VerificationMethodType},
     };
+    use did_doc::schema::service::Endpoint;
     use did_parser_nom::DidUrl;
     use public_key::KeyType;
 
@@ -154,7 +155,7 @@ mod tests {
     fn test_create_did_peer_4() {
         let service = Service::new(
             Uri::new("#service-0").unwrap(),
-            "https://example.com/endpoint".parse().unwrap(),
+            Some(OneOrList::One(Endpoint::Uri("https://example.com/endpoint".parse().unwrap()))),
             OneOrList::One(ServiceType::DIDCommV2),
             HashMap::default(),
         );
@@ -274,8 +275,9 @@ mod tests {
             service.service_type(),
             &OneOrList::One(ServiceType::DIDCommV1)
         );
+        let service_endpoint_url: Option<Url> = service.service_endpoint().clone().and_then(|e| e.try_into().ok());
         assert_eq!(
-            service.service_endpoint().to_string(),
+            service_endpoint_url.unwrap().to_string(),
             "http://host.docker.internal:9031/"
         );
         let service_recip = service.extra_field_recipient_keys().unwrap();

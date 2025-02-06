@@ -16,13 +16,38 @@ pub mod service_accept_type;
 pub mod service_key_kind;
 pub mod typed;
 
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+#[serde(untagged)]
+pub enum Endpoint {
+    Uri(Url),
+    Map(Value),
+}
+
+impl TryFrom<OneOrList<Endpoint>> for Url {
+    type Error = ();
+    fn try_from(endpoint: OneOrList<Endpoint>) -> Result<Self, Self::Error> {
+        match endpoint {
+            OneOrList::One(Endpoint::Uri(url)) => Ok(url),
+            OneOrList::List(endpoints) => endpoints.into_iter()
+                .find_map(|e| match e {
+                    Endpoint::Uri(url) => Some(url),
+                    _ => None
+                })
+                .ok_or(()),
+            _ => Err(())
+        }
+    }
+}
+
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Display)]
 #[serde(rename_all = "camelCase")]
 pub struct Service {
     id: Uri,
     #[serde(rename = "type")]
     service_type: OneOrList<ServiceType>,
-    service_endpoint: Url,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    service_endpoint: Option<OneOrList<Endpoint>>,
     #[serde(flatten)]
     #[serde(skip_serializing_if = "HashMap::is_empty")]
     extra: HashMap<String, Value>,
@@ -31,7 +56,7 @@ pub struct Service {
 impl Service {
     pub fn new(
         id: Uri,
-        service_endpoint: Url,
+        service_endpoint: Option<OneOrList<Endpoint>>,
         service_type: OneOrList<ServiceType>,
         extra: HashMap<String, Value>,
     ) -> Service {
@@ -58,7 +83,7 @@ impl Service {
         }
     }
 
-    pub fn service_endpoint(&self) -> &Url {
+    pub fn service_endpoint(&self) -> &Option<OneOrList<Endpoint>> {
         &self.service_endpoint
     }
 

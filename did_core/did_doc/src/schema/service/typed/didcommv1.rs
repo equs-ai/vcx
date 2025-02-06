@@ -3,7 +3,6 @@ use std::collections::HashMap;
 use display_as_json::Display;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
-use url::Url;
 
 use crate::{
     error::DidDocumentBuilderError,
@@ -18,6 +17,7 @@ use crate::{
         utils::OneOrList,
     },
 };
+use crate::schema::service::Endpoint;
 
 #[derive(Serialize, Clone, Debug, PartialEq)]
 pub struct ServiceDidCommV1 {
@@ -39,7 +39,7 @@ pub struct ExtraFieldsDidCommV1 {
 impl ServiceDidCommV1 {
     pub fn new(
         id: Uri,
-        service_endpoint: Url,
+        service_endpoint: Option<OneOrList<Endpoint>>,
         priority: u32,
         recipient_keys: Vec<ServiceKeyKind>,
         routing_keys: Vec<ServiceKeyKind>,
@@ -64,7 +64,7 @@ impl ServiceDidCommV1 {
         self.service.id()
     }
 
-    pub fn service_endpoint(&self) -> Url {
+    pub fn service_endpoint(&self) -> Option<OneOrList<Endpoint>> {
         self.service.service_endpoint().clone()
     }
 
