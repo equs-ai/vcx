@@ -27,18 +27,34 @@ impl TryFrom<OneOrList<Endpoint>> for Url {
     type Error = DidDocumentBuilderError;
     fn try_from(endpoint: OneOrList<Endpoint>) -> Result<Self, Self::Error> {
         match endpoint {
-            OneOrList::One(Endpoint::Uri(url)) => Ok(url),
+            OneOrList::One(endpoint) => match endpoint {
+                Endpoint::Uri(url) => Ok(url),
+                Endpoint::Map(map) => {
+                    if let Some(url_str) = map.get("uri").and_then(|v| v.as_str()) {
+                        Url::parse(url_str).map_err(|_| DidDocumentBuilderError::CustomError(
+                            "Invalid URL in map".to_string()
+                        ))
+                    } else {
+                        Err(DidDocumentBuilderError::CustomError(
+                            "No URL found in endpoint map".to_string()
+                        ))
+                    }
+                }
+            },
             OneOrList::List(endpoints) => endpoints.into_iter()
                 .find_map(|e| match e {
-                    Endpoint::Uri(url) => Some(url),
-                    _ => None
+                    Endpoint::Uri(url) => Some(Ok(url)),
+                    Endpoint::Map(map) => map.get("uri")
+                        .and_then(|v| v.as_str())
+                        .map(|url_str| Url::parse(url_str))
+                        .transpose()
+                        .map_err(|_| DidDocumentBuilderError::CustomError(
+                            "Invalid URL in map".to_string()
+                        )).transpose()
                 })
-                .ok_or(DidDocumentBuilderError::CustomError(
+                .unwrap_or(Err(DidDocumentBuilderError::CustomError(
                     "No valid URL found in endpoint list".to_string()
-                )),
-            _ => Err(DidDocumentBuilderError::CustomError(
-                "Invalid endpoint format".to_string()
-            ))
+                )))
         }
     }
 }
