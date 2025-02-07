@@ -261,7 +261,7 @@ mod tests {
     fn test_encoded_document_has_builder_api() {
         let service = Service::new(
             Uri::new("#service-0").unwrap(),
-            Some(OneOrList::One(Endpoint::Uri("https://example.com/endpoint".parse().unwrap()))),
+            OneOrList::One(Endpoint::Uri("https://example.com/endpoint".parse().unwrap())),
             OneOrList::One(ServiceType::DIDCommV2),
             HashMap::default(),
         );

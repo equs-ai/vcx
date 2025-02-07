@@ -77,7 +77,7 @@ async fn demo_did_peer_2_and_3() -> Result<(), Box<dyn Error>> {
 async fn demo_did_peer_4() -> Result<(), Box<dyn Error>> {
     let service = Service::new(
         Uri::new("#service-0").unwrap(),
-        Some(OneOrList::One(Endpoint::Uri("https://example.com/endpoint".parse().unwrap()))),
+        OneOrList::One(Endpoint::Uri("https://example.com/endpoint".parse().unwrap())),
         OneOrList::One(ServiceType::DIDCommV2),
         HashMap::default(),
     );

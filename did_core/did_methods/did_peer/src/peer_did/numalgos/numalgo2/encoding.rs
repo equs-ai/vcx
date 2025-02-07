@@ -197,7 +197,7 @@ mod tests {
 
         let service = Service::new(
             Uri::new("#service-0").unwrap(),
-            Some(OneOrList::One(Endpoint::Uri("https://example.com/endpoint".parse().unwrap()))),
+            OneOrList::One(Endpoint::Uri("https://example.com/endpoint".parse().unwrap())),
             OneOrList::One(ServiceType::DIDCommV2),
             convert_to_hashmap(&extra).unwrap(),
         );

@@ -22,8 +22,7 @@ pub struct ServiceAbbreviatedDidPeer2 {
     #[serde(rename = "t")]
     service_type: OneOrList<String>,
     #[serde(rename = "s")]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    service_endpoint: Option<OneOrList<Endpoint>>,
+    service_endpoint: OneOrList<Endpoint>,
     #[serde(rename = "r")]
     #[serde(default)]
     #[serde(skip_serializing_if = "Vec::is_empty")]
@@ -41,7 +40,7 @@ impl ServiceAbbreviatedDidPeer2 {
     pub fn new(
         id: Option<Uri>,
         service_type: OneOrList<String>,
-        service_endpoint: Option<OneOrList<Endpoint>>,
+        service_endpoint: OneOrList<Endpoint>,
         routing_keys: Vec<ServiceKeyKind>,
         accept: Vec<ServiceAcceptType>,
     ) -> Self {
@@ -195,7 +194,7 @@ mod tests {
             id: Some(Uri::new("#service-0").unwrap()),
             service_type: OneOrList::One("dm".to_string()),
             // service_endpoint: Url::parse("https://example.org").unwrap(),
-            service_endpoint: Some(OneOrList::One(Endpoint::Uri(Url::parse("https://example.com/endpoint").unwrap()))),
+            service_endpoint: OneOrList::One(Endpoint::Uri(Url::parse("https://example.com/endpoint").unwrap())),
             routing_keys: vec![],
             accept: vec![],
             extra: HashMap::new(),
@@ -219,7 +218,7 @@ mod tests {
         let service_abbreviated = ServiceAbbreviatedDidPeer2 {
             id: Some(service_id),
             service_type: OneOrList::One("foobar".to_string()),
-            service_endpoint: Some(OneOrList::One(Endpoint::Uri("https://example.com/endpoint".parse().unwrap()))),
+            service_endpoint: OneOrList::One(Endpoint::Uri("https://example.com/endpoint".parse().unwrap())),
             routing_keys: routing_keys.clone(),
             accept: accept.clone(),
             extra: HashMap::new(),
@@ -227,7 +226,7 @@ mod tests {
         let index = 0;
 
         let service = deabbreviate_service(service_abbreviated, index).unwrap();
-        let service_endpoint_url: Option<Url> = service.service_endpoint().clone().and_then(|e| e.try_into().ok());
+        let service_endpoint_url: Option<Url> = service.service_endpoint().clone().try_into().ok();
         assert_eq!(service.service_type().clone(), service_type);
         assert_eq!(service_endpoint_url.unwrap(), service_endpoint);
         assert_eq!(service.extra_field_routing_keys().unwrap(), routing_keys);

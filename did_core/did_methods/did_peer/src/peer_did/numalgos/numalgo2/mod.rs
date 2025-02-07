@@ -155,7 +155,7 @@ mod test {
             .get_service_by_id(&"#didcomm-0".parse().unwrap())
             .unwrap();
 
-        let service_endpoint_url: Option<Url> = service.service_endpoint().clone().and_then(|e| e.try_into().ok());
+        let service_endpoint_url: Option<Url> = service.service_endpoint().clone().try_into().ok();
         assert_eq!(
             service_endpoint_url.unwrap().to_string(),
             "http://host.docker.internal:9031/"

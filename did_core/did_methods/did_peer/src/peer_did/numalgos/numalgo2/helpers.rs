@@ -195,7 +195,7 @@ mod tests {
         let service = did_doc.service().first().unwrap();
         assert_eq!(service.id().to_string(), "#service-0".to_string());
         assert_eq!(service.service_types(), vec!(ServiceType::DIDCommV2));
-        let service_endpoint_url : Option<Url>= service.service_endpoint().clone().and_then(|e| e.try_into().ok());
+        let service_endpoint_url : Option<Url>= service.service_endpoint().clone().try_into().ok();
         assert_eq!(
             service_endpoint_url.unwrap().to_string(),
             "https://example.com/endpoint".to_string()

@@ -155,7 +155,7 @@ mod tests {
     fn test_create_did_peer_4() {
         let service = Service::new(
             Uri::new("#service-0").unwrap(),
-            Some(OneOrList::One(Endpoint::Uri("https://example.com/endpoint".parse().unwrap()))),
+            OneOrList::One(Endpoint::Uri("https://example.com/endpoint".parse().unwrap())),
             OneOrList::One(ServiceType::DIDCommV2),
             HashMap::default(),
         );
@@ -275,7 +275,7 @@ mod tests {
             service.service_type(),
             &OneOrList::One(ServiceType::DIDCommV1)
         );
-        let service_endpoint_url: Option<Url> = service.service_endpoint().clone().and_then(|e| e.try_into().ok());
+        let service_endpoint_url: Option<Url> = service.service_endpoint().clone().try_into().ok();
         assert_eq!(
             service_endpoint_url.unwrap().to_string(),
             "http://host.docker.internal:9031/"
