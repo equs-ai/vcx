@@ -22,7 +22,7 @@ pub struct ServiceDidCommV2 {
 impl ServiceDidCommV2 {
     pub fn new(
         id: Uri,
-        service_endpoint: Option<OneOrList<Endpoint>>,
+        service_endpoint: OneOrList<Endpoint>,
         routing_keys: Vec<ServiceKeyKind>,
         accept: Vec<ServiceAcceptType>,
     ) -> Self {
@@ -44,7 +44,7 @@ impl ServiceDidCommV2 {
         self.service.id()
     }
 
-    pub fn service_endpoint(&self) -> Option<OneOrList<Endpoint>> {
+    pub fn service_endpoint(&self) -> OneOrList<Endpoint> {
         self.service.service_endpoint().clone()
     }
 

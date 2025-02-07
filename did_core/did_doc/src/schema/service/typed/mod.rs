@@ -16,8 +16,7 @@ pub(crate) struct TypedService<E> {
     id: Uri,
     #[serde(rename = "type")]
     service_type: ServiceType,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    service_endpoint: Option<OneOrList<Endpoint>>,
+    service_endpoint: OneOrList<Endpoint>,
     #[serde(flatten)]
     extra: E,
 }
@@ -27,7 +26,7 @@ impl<E> TypedService<E> {
         &self.id
     }
 
-    pub fn service_endpoint(&self) -> &Option<OneOrList<Endpoint>> {
+    pub fn service_endpoint(&self) -> &OneOrList<Endpoint> {
         &self.service_endpoint
     }
 

@@ -39,7 +39,7 @@ pub struct ExtraFieldsDidCommV1 {
 impl ServiceDidCommV1 {
     pub fn new(
         id: Uri,
-        service_endpoint: Option<OneOrList<Endpoint>>,
+        service_endpoint: OneOrList<Endpoint>,
         priority: u32,
         recipient_keys: Vec<ServiceKeyKind>,
         routing_keys: Vec<ServiceKeyKind>,
@@ -64,7 +64,7 @@ impl ServiceDidCommV1 {
         self.service.id()
     }
 
-    pub fn service_endpoint(&self) -> Option<OneOrList<Endpoint>> {
+    pub fn service_endpoint(&self) -> OneOrList<Endpoint> {
         self.service.service_endpoint().clone()
     }
 

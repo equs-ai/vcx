@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-
+use std::fmt::format;
 use display_as_json::Display;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -25,7 +25,7 @@ pub enum Endpoint {
 }
 
 impl TryFrom<OneOrList<Endpoint>> for Url {
-    type Error = ();
+    type Error = DidDocumentBuilderError;
     fn try_from(endpoint: OneOrList<Endpoint>) -> Result<Self, Self::Error> {
         match endpoint {
             OneOrList::One(Endpoint::Uri(url)) => Ok(url),
@@ -34,8 +34,12 @@ impl TryFrom<OneOrList<Endpoint>> for Url {
                     Endpoint::Uri(url) => Some(url),
                     _ => None
                 })
-                .ok_or(()),
-            _ => Err(())
+                .ok_or_else(|err| DidDocumentBuilderError::CustomError(
+                    "No valid URL found in endpoint list".to_string()
+                )),
+            _ => Err(DidDocumentBuilderError::CustomError(
+                "Invalid endpoint format".to_string()
+            ))
         }
     }
 }
@@ -46,8 +50,7 @@ pub struct Service {
     id: Uri,
     #[serde(rename = "type")]
     service_type: OneOrList<ServiceType>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    service_endpoint: Option<OneOrList<Endpoint>>,
+    service_endpoint: OneOrList<Endpoint>,
     #[serde(flatten)]
     #[serde(skip_serializing_if = "HashMap::is_empty")]
     extra: HashMap<String, Value>,
@@ -56,7 +59,7 @@ pub struct Service {
 impl Service {
     pub fn new(
         id: Uri,
-        service_endpoint: Option<OneOrList<Endpoint>>,
+        service_endpoint: OneOrList<Endpoint>,
         service_type: OneOrList<ServiceType>,
         extra: HashMap<String, Value>,
     ) -> Service {
@@ -83,7 +86,7 @@ impl Service {
         }
     }
 
-    pub fn service_endpoint(&self) -> &Option<OneOrList<Endpoint>> {
+    pub fn service_endpoint(&self) -> &OneOrList<Endpoint> {
         &self.service_endpoint
     }
 
