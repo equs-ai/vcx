@@ -193,7 +193,6 @@ mod tests {
         let service_abbreviated = ServiceAbbreviatedDidPeer2 {
             id: Some(Uri::new("#service-0").unwrap()),
             service_type: OneOrList::One("dm".to_string()),
-            // service_endpoint: Url::parse("https://example.org").unwrap(),
             service_endpoint: OneOrList::One(Endpoint::Uri(Url::parse("https://example.com/endpoint").unwrap())),
             routing_keys: vec![],
             accept: vec![],
