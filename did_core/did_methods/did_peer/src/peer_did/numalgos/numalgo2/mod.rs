@@ -69,7 +69,7 @@ mod test {
     use did_parser_nom::DidUrl;
     use pretty_assertions::assert_eq;
     use serde_json::{from_value, json};
-
+    use url::Url;
     use crate::{
         peer_did::{numalgos::numalgo2::Numalgo2, PeerDid},
         resolver::options::PublicKeyEncoding,
@@ -154,8 +154,10 @@ mod test {
         let service = doc
             .get_service_by_id(&"#didcomm-0".parse().unwrap())
             .unwrap();
+
+        let service_endpoint_url: Option<Url> = service.service_endpoint().clone().try_into().ok();
         assert_eq!(
-            service.service_endpoint().to_string(),
+            service_endpoint_url.unwrap().to_string(),
             "http://host.docker.internal:9031/"
         );
         let recips = service.extra_field_recipient_keys().unwrap();

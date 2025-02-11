@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-
 use display_as_json::Display;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -16,13 +15,57 @@ pub mod service_accept_type;
 pub mod service_key_kind;
 pub mod typed;
 
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+#[serde(untagged)]
+pub enum Endpoint {
+    Uri(Url),
+    Map(Value),
+}
+
+impl TryFrom<OneOrList<Endpoint>> for Url {
+    type Error = DidDocumentBuilderError;
+    fn try_from(endpoint: OneOrList<Endpoint>) -> Result<Self, Self::Error> {
+        match endpoint {
+            OneOrList::One(endpoint) => match endpoint {
+                Endpoint::Uri(url) => Ok(url),
+                Endpoint::Map(map) => {
+                    if let Some(url_str) = map.get("uri").and_then(|v| v.as_str()) {
+                        Url::parse(url_str).map_err(|_| DidDocumentBuilderError::CustomError(
+                            "Invalid URL in map".to_string()
+                        ))
+                    } else {
+                        Err(DidDocumentBuilderError::CustomError(
+                            "No URL found in endpoint map".to_string()
+                        ))
+                    }
+                }
+            },
+            OneOrList::List(endpoints) => endpoints.into_iter()
+                .find_map(|e| match e {
+                    Endpoint::Uri(url) => Some(Ok(url)),
+                    Endpoint::Map(map) => map.get("uri")
+                        .and_then(|v| v.as_str())
+                        .map(|url_str| Url::parse(url_str))
+                        .transpose()
+                        .map_err(|_| DidDocumentBuilderError::CustomError(
+                            "Invalid URL in map".to_string()
+                        )).transpose()
+                })
+                .unwrap_or(Err(DidDocumentBuilderError::CustomError(
+                    "No valid URL found in endpoint list".to_string()
+                )))
+        }
+    }
+}
+
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Display)]
 #[serde(rename_all = "camelCase")]
 pub struct Service {
     id: Uri,
     #[serde(rename = "type")]
     service_type: OneOrList<ServiceType>,
-    service_endpoint: Url,
+    service_endpoint: OneOrList<Endpoint>,
     #[serde(flatten)]
     #[serde(skip_serializing_if = "HashMap::is_empty")]
     extra: HashMap<String, Value>,
@@ -31,7 +74,7 @@ pub struct Service {
 impl Service {
     pub fn new(
         id: Uri,
-        service_endpoint: Url,
+        service_endpoint: OneOrList<Endpoint>,
         service_type: OneOrList<ServiceType>,
         extra: HashMap<String, Value>,
     ) -> Service {
@@ -58,9 +101,7 @@ impl Service {
         }
     }
 
-    pub fn service_endpoint(&self) -> &Url {
-        &self.service_endpoint
-    }
+    pub fn service_endpoint(&self) -> &OneOrList<Endpoint> { &self.service_endpoint }
 
     pub fn extra(&self) -> &HashMap<String, Value> {
         &self.extra
@@ -164,7 +205,7 @@ mod tests {
 
     use did_parser_nom::DidUrl;
     use serde_json::json;
-
+    use url::Url;
     use crate::schema::{
         service::{
             service_accept_type::ServiceAcceptType, service_key_kind::ServiceKeyKind,
@@ -173,6 +214,7 @@ mod tests {
         types::uri::Uri,
         utils::OneOrList,
     };
+    use crate::schema::service::Endpoint;
 
     #[test]
     fn test_service_builder() {
@@ -182,13 +224,39 @@ mod tests {
 
         let service = Service::new(
             uri_id.clone(),
-            service_endpoint.try_into().unwrap(),
+            OneOrList::One(Endpoint::Uri(Url::parse(service_endpoint).unwrap())),
             OneOrList::One(service_type.clone()),
             HashMap::default(),
         );
 
         assert_eq!(service.id(), &uri_id);
-        assert_eq!(service.service_endpoint().as_ref(), service_endpoint);
+        assert_eq!(service.service_endpoint().to_owned(), OneOrList::One(Endpoint::Uri(Url::parse(service_endpoint).unwrap())));
+        assert_eq!(service.service_types(), vec!(service_type.clone()));
+        assert_eq!(service.service_type(), &OneOrList::One(service_type));
+    }
+
+    #[test]
+    fn test_service_builder_with_service_endpoint_map_array() {
+        let uri_id = Uri::new("http://example.com").unwrap();
+        let service_endpoint = json!([
+            "https://example.com/endpoint",
+            {
+            "uri": "https://example.com/endpoint",
+            "accept": ["didcomm/v2"],
+            "routing": ["did:example:mediator"]
+            }
+        ]);
+        let service_type = ServiceType::DIDCommV2;
+
+        let service = Service::new(
+            uri_id.clone(),
+            OneOrList::One(Endpoint::Map(service_endpoint.clone())),
+            OneOrList::One(service_type.clone()),
+            HashMap::default(),
+        );
+
+        assert_eq!(service.id(), &uri_id);
+        assert_eq!(service.service_endpoint().to_owned(), OneOrList::One(Endpoint::Map(service_endpoint)));
         assert_eq!(service.service_types(), vec!(service_type.clone()));
         assert_eq!(service.service_type(), &OneOrList::One(service_type));
     }
@@ -205,8 +273,8 @@ mod tests {
 
         assert_eq!(service.id().to_string(), "service-0");
         assert_eq!(
-            service.service_endpoint().to_string(),
-            "https://example.com/endpoint"
+            service.service_endpoint().to_owned(),
+            OneOrList::One(Endpoint::Uri(Url::parse( "https://example.com/endpoint").unwrap()))
         );
         assert_eq!(service.service_types().first().unwrap(), &ServiceType::AIP1);
     }
@@ -231,8 +299,8 @@ mod tests {
             &ServiceType::DIDCommV1
         );
         assert_eq!(
-            service.service_endpoint().to_string(),
-            "https://example.com/endpoint"
+            service.service_endpoint().to_owned(),
+            OneOrList::One(Endpoint::Uri(Url::parse( "https://example.com/endpoint").unwrap()))
         );
 
         let recipient_keys = service.extra_field_recipient_keys().unwrap();
@@ -285,8 +353,8 @@ mod tests {
             &ServiceType::DIDCommV2
         );
         assert_eq!(
-            service.service_endpoint().to_string(),
-            "https://example.com/endpoint"
+            service.service_endpoint().to_owned(),
+            OneOrList::One(Endpoint::Uri(Url::parse( "https://example.com/endpoint").unwrap()))
         );
 
         let accept = service.extra_field_accept().unwrap();

@@ -128,7 +128,7 @@ mod tests {
     };
     use did_parser_nom::{Did, DidUrl};
     use pretty_assertions::assert_eq;
-
+    use did_doc::schema::service::Endpoint;
     use super::*;
     use crate::{
         helpers::convert_to_hashmap,
@@ -197,7 +197,7 @@ mod tests {
 
         let service = Service::new(
             Uri::new("#service-0").unwrap(),
-            "https://example.com/endpoint".parse().unwrap(),
+            OneOrList::One(Endpoint::Uri("https://example.com/endpoint".parse().unwrap())),
             OneOrList::One(ServiceType::DIDCommV2),
             convert_to_hashmap(&extra).unwrap(),
         );

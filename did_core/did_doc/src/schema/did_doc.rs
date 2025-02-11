@@ -361,7 +361,7 @@ mod tests {
         let service_endpoint = "https://example.com/service";
         let service = Service::new(
             service_id,
-            service_endpoint.try_into().unwrap(),
+            OneOrList::One(Endpoint::Uri(Url::parse(service_endpoint).unwrap())),
             OneOrList::One(ServiceType::Other("test-service".to_string())),
             HashMap::default(),
         );
@@ -393,13 +393,14 @@ mod tests {
 
     use did_parser_nom::{Did, DidUrl};
     use serde_json::Value;
-
+    use url::Url;
     use crate::schema::{
         did_doc::DidDocument,
         service::typed::ServiceType,
         types::{jsonwebkey::JsonWebKey, uri::Uri},
         verification_method::{VerificationMethod, VerificationMethodKind},
     };
+    use crate::schema::service::Endpoint;
 
     const VALID_DID_DOC_JSON: &str = r##"
     {

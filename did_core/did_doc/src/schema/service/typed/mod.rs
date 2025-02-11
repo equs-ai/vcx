@@ -6,16 +6,17 @@ pub mod legacy;
 use std::{fmt::Display, str::FromStr};
 
 use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
-use url::Url;
 
 use crate::{error::DidDocumentBuilderError, schema::types::uri::Uri};
+use crate::schema::service::Endpoint;
+use crate::schema::utils::OneOrList;
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub(crate) struct TypedService<E> {
     id: Uri,
     #[serde(rename = "type")]
     service_type: ServiceType,
-    service_endpoint: Url,
+    service_endpoint: OneOrList<Endpoint>,
     #[serde(flatten)]
     extra: E,
 }
@@ -25,7 +26,7 @@ impl<E> TypedService<E> {
         &self.id
     }
 
-    pub fn service_endpoint(&self) -> &Url {
+    pub fn service_endpoint(&self) -> &OneOrList<Endpoint> {
         &self.service_endpoint
     }
 

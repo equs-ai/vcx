@@ -124,9 +124,8 @@ fn add_key_from_element(
 
 #[cfg(test)]
 mod tests {
+    use url::Url;
     use did_doc::schema::service::typed::ServiceType;
-    use pretty_assertions::assert_eq;
-
     use super::*;
 
     #[test]
@@ -196,8 +195,9 @@ mod tests {
         let service = did_doc.service().first().unwrap();
         assert_eq!(service.id().to_string(), "#service-0".to_string());
         assert_eq!(service.service_types(), vec!(ServiceType::DIDCommV2));
+        let service_endpoint_url : Option<Url>= service.service_endpoint().clone().try_into().ok();
         assert_eq!(
-            service.service_endpoint().to_string(),
+            service_endpoint_url.unwrap().to_string(),
             "https://example.com/endpoint".to_string()
         );
     }

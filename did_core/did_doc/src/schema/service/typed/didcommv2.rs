@@ -1,7 +1,6 @@
 use display_as_json::Display;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
-use url::Url;
 
 use crate::schema::{
     service::{
@@ -11,6 +10,8 @@ use crate::schema::{
     },
     types::uri::Uri,
 };
+use crate::schema::service::Endpoint;
+use crate::schema::utils::OneOrList;
 
 #[derive(Serialize, Clone, Debug, PartialEq)]
 pub struct ServiceDidCommV2 {
@@ -21,7 +22,7 @@ pub struct ServiceDidCommV2 {
 impl ServiceDidCommV2 {
     pub fn new(
         id: Uri,
-        service_endpoint: Url,
+        service_endpoint: OneOrList<Endpoint>,
         routing_keys: Vec<ServiceKeyKind>,
         accept: Vec<ServiceAcceptType>,
     ) -> Self {
@@ -43,7 +44,7 @@ impl ServiceDidCommV2 {
         self.service.id()
     }
 
-    pub fn service_endpoint(&self) -> Url {
+    pub fn service_endpoint(&self) -> OneOrList<Endpoint> {
         self.service.service_endpoint().clone()
     }
 
