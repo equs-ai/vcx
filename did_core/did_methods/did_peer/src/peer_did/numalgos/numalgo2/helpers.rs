@@ -124,9 +124,9 @@ fn add_key_from_element(
 
 #[cfg(test)]
 mod tests {
-    use url::Url;
-    use did_doc::schema::service::typed::ServiceType;
     use super::*;
+    use did_doc::schema::service::typed::ServiceType;
+    use url::Url;
 
     #[test]
     fn test_process_elements_empty_did() {
@@ -195,7 +195,7 @@ mod tests {
         let service = did_doc.service().first().unwrap();
         assert_eq!(service.id().to_string(), "#service-0".to_string());
         assert_eq!(service.service_types(), vec!(ServiceType::DIDCommV2));
-        let service_endpoint_url : Option<Url>= service.service_endpoint().clone().try_into().ok();
+        let service_endpoint_url: Option<Url> = service.service_endpoint().clone().try_into().ok();
         assert_eq!(
             service_endpoint_url.unwrap().to_string(),
             "https://example.com/endpoint".to_string()

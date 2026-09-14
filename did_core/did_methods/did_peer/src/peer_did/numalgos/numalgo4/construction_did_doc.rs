@@ -249,19 +249,21 @@ impl DidPeer4VerificationMethod {
 mod tests {
     use std::collections::HashMap;
 
+    use crate::peer_did::numalgos::numalgo4::construction_did_doc::DidPeer4ConstructionDidDocument;
+    use did_doc::schema::service::Endpoint;
     use did_doc::schema::{
         service::{typed::ServiceType, Service},
         types::uri::Uri,
         utils::OneOrList,
     };
-    use did_doc::schema::service::Endpoint;
-    use crate::peer_did::numalgos::numalgo4::construction_did_doc::DidPeer4ConstructionDidDocument;
 
     #[test]
     fn test_encoded_document_has_builder_api() {
         let service = Service::new(
             Uri::new("#service-0").unwrap(),
-            OneOrList::One(Endpoint::Uri("https://example.com/endpoint".parse().unwrap())),
+            OneOrList::One(Endpoint::Uri(
+                "https://example.com/endpoint".parse().unwrap(),
+            )),
             OneOrList::One(ServiceType::DIDCommV2),
             HashMap::default(),
         );

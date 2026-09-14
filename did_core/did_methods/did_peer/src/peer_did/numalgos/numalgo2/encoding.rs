@@ -116,6 +116,13 @@ fn append_key_to_did(mut did: String, key: Key, purpose: ElementPurpose) -> Stri
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+    use crate::{
+        helpers::convert_to_hashmap,
+        peer_did::{numalgos::numalgo2::Numalgo2, PeerDid},
+        resolver::options::PublicKeyEncoding,
+    };
+    use did_doc::schema::service::Endpoint;
     use did_doc::schema::{
         service::{
             service_key_kind::ServiceKeyKind,
@@ -128,13 +135,6 @@ mod tests {
     };
     use did_parser_nom::{Did, DidUrl};
     use pretty_assertions::assert_eq;
-    use did_doc::schema::service::Endpoint;
-    use super::*;
-    use crate::{
-        helpers::convert_to_hashmap,
-        peer_did::{numalgos::numalgo2::Numalgo2, PeerDid},
-        resolver::options::PublicKeyEncoding,
-    };
 
     fn create_verification_method(
         verification_method_id: String,
@@ -197,7 +197,9 @@ mod tests {
 
         let service = Service::new(
             Uri::new("#service-0").unwrap(),
-            OneOrList::One(Endpoint::Uri("https://example.com/endpoint".parse().unwrap())),
+            OneOrList::One(Endpoint::Uri(
+                "https://example.com/endpoint".parse().unwrap(),
+            )),
             OneOrList::One(ServiceType::DIDCommV2),
             convert_to_hashmap(&extra).unwrap(),
         );

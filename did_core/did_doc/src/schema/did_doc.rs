@@ -391,16 +391,16 @@ mod tests {
 
     use std::str::FromStr;
 
-    use did_parser_nom::{Did, DidUrl};
-    use serde_json::Value;
-    use url::Url;
+    use crate::schema::service::Endpoint;
     use crate::schema::{
         did_doc::DidDocument,
         service::typed::ServiceType,
         types::{jsonwebkey::JsonWebKey, uri::Uri},
         verification_method::{VerificationMethod, VerificationMethodKind},
     };
-    use crate::schema::service::Endpoint;
+    use did_parser_nom::{Did, DidUrl};
+    use serde_json::Value;
+    use url::Url;
 
     const VALID_DID_DOC_JSON: &str = r##"
     {

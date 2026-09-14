@@ -1,5 +1,7 @@
 use std::{collections::HashMap, str::FromStr};
 
+use crate::error::DidPeerError;
+use did_doc::schema::service::Endpoint;
 use did_doc::schema::{
     service::{
         service_accept_type::ServiceAcceptType, service_key_kind::ServiceKeyKind,
@@ -10,8 +12,6 @@ use did_doc::schema::{
 };
 use serde::{Deserialize, Serialize};
 use serde_json::{from_value, Value};
-use did_doc::schema::service::Endpoint;
-use crate::error::DidPeerError;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ServiceAbbreviatedDidPeer2 {
@@ -173,6 +173,10 @@ pub(crate) fn deabbreviate_service(
 mod tests {
     use std::collections::HashMap;
 
+    use crate::peer_did::numalgos::numalgo2::service_abbreviation::{
+        abbreviate_service, deabbreviate_service, ServiceAbbreviatedDidPeer2,
+    };
+    use did_doc::schema::service::Endpoint;
     use did_doc::schema::{
         service::{
             service_accept_type::ServiceAcceptType, service_key_kind::ServiceKeyKind,
@@ -183,17 +187,15 @@ mod tests {
     };
     use serde_json::json;
     use url::Url;
-    use did_doc::schema::service::Endpoint;
-    use crate::peer_did::numalgos::numalgo2::service_abbreviation::{
-        abbreviate_service, deabbreviate_service, ServiceAbbreviatedDidPeer2,
-    };
 
     #[test]
     fn test_deabbreviate_service_type_value_dm() {
         let service_abbreviated = ServiceAbbreviatedDidPeer2 {
             id: Some(Uri::new("#service-0").unwrap()),
             service_type: OneOrList::One("dm".to_string()),
-            service_endpoint: OneOrList::One(Endpoint::Uri(Url::parse("https://example.com/endpoint").unwrap())),
+            service_endpoint: OneOrList::One(Endpoint::Uri(
+                Url::parse("https://example.com/endpoint").unwrap(),
+            )),
             routing_keys: vec![],
             accept: vec![],
             extra: HashMap::new(),
@@ -217,7 +219,9 @@ mod tests {
         let service_abbreviated = ServiceAbbreviatedDidPeer2 {
             id: Some(service_id),
             service_type: OneOrList::One("foobar".to_string()),
-            service_endpoint: OneOrList::One(Endpoint::Uri("https://example.com/endpoint".parse().unwrap())),
+            service_endpoint: OneOrList::One(Endpoint::Uri(
+                "https://example.com/endpoint".parse().unwrap(),
+            )),
             routing_keys: routing_keys.clone(),
             accept: accept.clone(),
             extra: HashMap::new(),

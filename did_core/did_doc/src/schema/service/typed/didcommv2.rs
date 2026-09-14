@@ -2,6 +2,8 @@ use display_as_json::Display;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
+use crate::schema::service::Endpoint;
+use crate::schema::utils::OneOrList;
 use crate::schema::{
     service::{
         service_accept_type::ServiceAcceptType,
@@ -10,8 +12,6 @@ use crate::schema::{
     },
     types::uri::Uri,
 };
-use crate::schema::service::Endpoint;
-use crate::schema::utils::OneOrList;
 
 #[derive(Serialize, Clone, Debug, PartialEq)]
 pub struct ServiceDidCommV2 {
