@@ -21,10 +21,10 @@ anoncreds = ["aries_vcx_anoncreds/anoncreds"]
 [dependencies]
 anoncreds_types = { path = "../../misc/anoncreds_types" }
 aries_vcx_anoncreds = { path = "../../aries_vcx_anoncreds" }
-did_parser_nom = { package = "equs-did-parser-nom", version = "0.1.0", path = "../../../did_core/did_parser_nom" }
+did_parser_nom = { package = "equs-vcx-did-parser-nom", version = "0.1.0", path = "../../../did_core/did_parser_nom" }
 aries_vcx_wallet = { path = "../../aries_vcx_wallet" }
 aries_vcx_ledger = { path = "../../aries_vcx_ledger" }
-public_key = { package = "equs-public-key", version = "0.1.0", path = "../../../did_core/public_key" }
+public_key = { package = "equs-vcx-public-key", version = "0.1.0", path = "../../../did_core/public_key" }
 indy-ledger-response-parser = { path = "../indy_ledger_response_parser", optional = true }
 indy-vdr-proxy-client = { workspace = true, optional = true }
 lazy_static = "1"

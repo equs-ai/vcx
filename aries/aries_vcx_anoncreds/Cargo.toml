@@ -15,7 +15,7 @@ legacy_proof = []
 anoncreds = { workspace = true, optional = true }
 aries_vcx_wallet = { path = "../aries_vcx_wallet" }
 anoncreds_types = { path = "../misc/anoncreds_types" }
-did_parser_nom = { package = "equs-did-parser-nom", version = "0.1.0", path = "../../did_core/did_parser_nom" }
+did_parser_nom = { package = "equs-vcx-did-parser-nom", version = "0.1.0", path = "../../did_core/did_parser_nom" }
 async-trait = "0.1.68"
 thiserror = "1.0.40"
 log = "0.4.17"

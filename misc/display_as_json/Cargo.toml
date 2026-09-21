@@ -1,5 +1,5 @@
 [package]
-name = "equs-display-as-json"
+name = "equs-vcx-display-as-json"
 version = "0.1.0"
 edition = "2018"
 description = "A custom derive macro to implement Display trait as JSON serialization"

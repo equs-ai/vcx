@@ -33,12 +33,12 @@ aries_vcx_anoncreds = { path = "../aries_vcx_anoncreds" }
 aries_vcx_ledger = { path = "../aries_vcx_ledger" }
 shared = { path = "../misc/shared" }
 anoncreds_types = { path = "../misc/anoncreds_types" }
-did_parser_nom = { package = "equs-did-parser-nom", version = "0.1.0", path = "../../did_core/did_parser_nom" }
-did_resolver = { package = "equs-did-resolver", version = "0.1.0", path = "../../did_core/did_resolver" }
-did_doc = { package = "equs-did-doc", version = "0.1.0", path = "../../did_core/did_doc" }
-did_key = { package = "equs-did-key", version = "0.1.0", path = "../../did_core/did_methods/did_key" }
-public_key = { package = "equs-public-key", version = "0.1.0", path = "../../did_core/public_key" }
-did_peer = { package = "equs-did-peer", version = "0.1.0", path = "../../did_core/did_methods/did_peer" }
+did_parser_nom = { package = "equs-vcx-did-parser-nom", version = "0.1.0", path = "../../did_core/did_parser_nom" }
+did_resolver = { package = "equs-vcx-did-resolver", version = "0.1.0", path = "../../did_core/did_resolver" }
+did_doc = { package = "equs-vcx-did-doc", version = "0.1.0", path = "../../did_core/did_doc" }
+did_key = { package = "equs-vcx-did-key", version = "0.1.0", path = "../../did_core/did_methods/did_key" }
+public_key = { package = "equs-vcx-public-key", version = "0.1.0", path = "../../did_core/public_key" }
+did_peer = { package = "equs-vcx-did-peer", version = "0.1.0", path = "../../did_core/did_methods/did_peer" }
 did_resolver_registry = { path = "../../did_core/did_resolver_registry" }
 bs58 = "0.5.0"
 async-trait = "0.1.53"
