@@ -43,5 +43,5 @@ jobs:
       - name: Run tests
         run: >
           cargo test
-          -p did_doc -p did_peer -p did_key -p did_parser_nom
-          -p did_resolver -p public_key -p display_as_json
+          -p equs-did-doc -p equs-did-peer -p equs-did-key -p equs-did-parser-nom
+          -p equs-did-resolver -p equs-public-key -p equs-display-as-json

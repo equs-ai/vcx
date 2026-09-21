@@ -495,13 +495,13 @@ dependencies = [
  "aries_vcx_ledger",
  "aries_vcx_wallet",
  "async-trait",
- "did_key",
- "did_peer",
  "did_resolver_registry",
  "did_resolver_sov",
- "display_as_json",
+ "equs-did-key",
+ "equs-did-peer",
+ "equs-display-as-json",
+ "equs-public-key",
  "log",
- "public_key",
  "serde",
  "serde_json",
  "shared",
@@ -519,8 +519,8 @@ dependencies = [
  "aries-vcx-agent",
  "clap 4.5.19",
  "derive_more",
- "display_as_json",
  "env_logger 0.11.5",
+ "equs-display-as-json",
  "log",
  "rand",
  "reqwest 0.12.8",
@@ -545,22 +545,22 @@ dependencies = [
  "bs58",
  "chrono",
  "derive_builder",
- "did_doc",
- "did_key",
- "did_parser_nom",
- "did_peer",
- "did_resolver",
  "did_resolver_registry",
  "did_resolver_sov",
  "diddoc_legacy",
  "env_logger 0.11.5",
+ "equs-did-doc",
+ "equs-did-key",
+ "equs-did-parser-nom",
+ "equs-did-peer",
+ "equs-did-resolver",
+ "equs-public-key",
  "futures",
  "lazy_static",
  "log",
  "messages",
  "num-bigint",
  "pretty_assertions",
- "public_key",
  "rand",
  "regex",
  "serde",
@@ -587,7 +587,7 @@ dependencies = [
  "aries_vcx_wallet",
  "async-trait",
  "bitvec",
- "did_parser_nom",
+ "equs-did-parser-nom",
  "log",
  "serde",
  "serde_json",
@@ -606,15 +606,15 @@ dependencies = [
  "bitvec",
  "chrono",
  "did_cheqd",
- "did_parser_nom",
- "did_resolver",
+ "equs-did-parser-nom",
+ "equs-did-resolver",
+ "equs-public-key",
  "indy-ledger-response-parser",
  "indy-vdr",
  "indy-vdr-proxy-client",
  "log",
  "lru",
  "mockall",
- "public_key",
  "serde",
  "serde_json",
  "thiserror",
@@ -633,8 +633,8 @@ dependencies = [
  "async-trait",
  "base64 0.22.1",
  "bs58",
+ "equs-public-key",
  "log",
- "public_key",
  "rand",
  "serde",
  "serde_json",
@@ -1733,7 +1733,7 @@ dependencies = [
  "async-trait",
  "bytes",
  "chrono",
- "did_resolver",
+ "equs-did-resolver",
  "http-body-util",
  "hyper-tls",
  "hyper-util",
@@ -1749,107 +1749,19 @@ dependencies = [
 ]
 
 [[package]]
-name = "did_doc"
-version = "0.1.0"
-dependencies = [
- "base64 0.22.1",
- "bs58",
- "did_key",
- "did_parser_nom",
- "display_as_json",
- "env_logger 0.11.5",
- "hex",
- "log",
- "multibase",
- "pem",
- "pretty_assertions",
- "public_key",
- "serde",
- "serde_json",
- "thiserror",
- "typed-builder",
- "uniresid",
- "url",
-]
-
-[[package]]
 name = "did_jwk"
 version = "0.1.0"
 dependencies = [
  "async-trait",
  "base64 0.22.1",
- "did_doc",
- "did_parser_nom",
- "did_resolver",
- "public_key",
+ "equs-did-doc",
+ "equs-did-parser-nom",
+ "equs-did-resolver",
+ "equs-public-key",
  "serde",
  "serde_json",
  "thiserror",
  "tokio",
-]
-
-[[package]]
-name = "did_key"
-version = "0.1.0"
-dependencies = [
- "did_parser_nom",
- "public_key",
- "serde",
- "serde_json",
- "thiserror",
-]
-
-[[package]]
-name = "did_parser_nom"
-version = "0.1.0"
-dependencies = [
- "env_logger 0.11.5",
- "log",
- "nom",
- "percent-encoding",
- "serde",
- "serde_test",
-]
-
-[[package]]
-name = "did_peer"
-version = "0.1.0"
-dependencies = [
- "async-trait",
- "base64 0.22.1",
- "bs58",
- "did_doc",
- "did_parser_nom",
- "did_resolver",
- "display_as_json",
- "env_logger 0.11.5",
- "log",
- "multibase",
- "once_cell",
- "pretty_assertions",
- "public_key",
- "regex",
- "serde",
- "serde_json",
- "sha2",
- "thiserror",
- "tokio",
- "typed-builder",
- "unsigned-varint",
- "url",
-]
-
-[[package]]
-name = "did_resolver"
-version = "0.1.0"
-dependencies = [
- "async-trait",
- "chrono",
- "did_doc",
- "did_parser_nom",
- "serde",
- "serde_json",
- "typed-builder",
 ]
 
 [[package]]
@@ -1857,7 +1769,7 @@ name = "did_resolver_registry"
 version = "0.1.0"
 dependencies = [
  "async-trait",
- "did_resolver",
+ "equs-did-resolver",
  "mockall",
  "serde",
  "serde_json",
@@ -1874,7 +1786,7 @@ dependencies = [
  "async-trait",
  "bs58",
  "chrono",
- "did_resolver",
+ "equs-did-resolver",
  "log",
  "mockall",
  "serde",
@@ -1891,7 +1803,7 @@ name = "did_resolver_web"
 version = "0.1.0"
 dependencies = [
  "async-trait",
- "did_resolver",
+ "equs-did-resolver",
  "http-body-util",
  "hyper 1.5.1",
  "hyper-tls",
@@ -1906,7 +1818,7 @@ dependencies = [
 name = "diddoc_legacy"
 version = "0.67.0"
 dependencies = [
- "display_as_json",
+ "equs-display-as-json",
  "serde",
  "serde_derive",
  "serde_json",
@@ -1931,17 +1843,6 @@ dependencies = [
  "const-oid",
  "crypto-common",
  "subtle",
-]
-
-[[package]]
-name = "display_as_json"
-version = "0.1.0"
-dependencies = [
- "quote",
- "serde",
- "serde_derive",
- "serde_json",
- "syn 2.0.79",
 ]
 
 [[package]]
@@ -2129,6 +2030,119 @@ name = "equivalent"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5443807d6dff69373d433ab9ef5378ad8df50ca6298caf15de6e52e24aaf54d5"
+
+[[package]]
+name = "equs-did-doc"
+version = "0.1.0"
+dependencies = [
+ "base64 0.22.1",
+ "bs58",
+ "env_logger 0.11.5",
+ "equs-did-key",
+ "equs-did-parser-nom",
+ "equs-display-as-json",
+ "equs-public-key",
+ "hex",
+ "log",
+ "multibase",
+ "pem",
+ "pretty_assertions",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "typed-builder",
+ "uniresid",
+ "url",
+]
+
+[[package]]
+name = "equs-did-key"
+version = "0.1.0"
+dependencies = [
+ "equs-did-parser-nom",
+ "equs-public-key",
+ "serde",
+ "serde_json",
+ "thiserror",
+]
+
+[[package]]
+name = "equs-did-parser-nom"
+version = "0.1.0"
+dependencies = [
+ "env_logger 0.11.5",
+ "log",
+ "nom",
+ "percent-encoding",
+ "serde",
+ "serde_test",
+]
+
+[[package]]
+name = "equs-did-peer"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "base64 0.22.1",
+ "bs58",
+ "env_logger 0.11.5",
+ "equs-did-doc",
+ "equs-did-parser-nom",
+ "equs-did-resolver",
+ "equs-display-as-json",
+ "equs-public-key",
+ "log",
+ "multibase",
+ "once_cell",
+ "pretty_assertions",
+ "regex",
+ "serde",
+ "serde_json",
+ "sha2",
+ "thiserror",
+ "tokio",
+ "typed-builder",
+ "unsigned-varint",
+ "url",
+]
+
+[[package]]
+name = "equs-did-resolver"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "chrono",
+ "equs-did-doc",
+ "equs-did-parser-nom",
+ "serde",
+ "serde_json",
+ "typed-builder",
+]
+
+[[package]]
+name = "equs-display-as-json"
+version = "0.1.0"
+dependencies = [
+ "quote",
+ "serde",
+ "serde_derive",
+ "serde_json",
+ "syn 2.0.79",
+]
+
+[[package]]
+name = "equs-public-key"
+version = "0.1.0"
+dependencies = [
+ "askar-crypto",
+ "base64 0.22.1",
+ "bs58",
+ "multibase",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "unsigned-varint",
+]
 
 [[package]]
 name = "errno"
@@ -3264,9 +3278,9 @@ version = "0.67.0"
 dependencies = [
  "chrono",
  "derive_more",
- "did_parser_nom",
  "diddoc_legacy",
- "display_as_json",
+ "equs-did-parser-nom",
+ "equs-display-as-json",
  "isolang",
  "lazy_static",
  "messages_macros",
@@ -4012,20 +4026,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4759aa0d3a6232fb8dbdb97b61de2c20047c68aca932c7ed76da9d788508d670"
 dependencies = [
  "prost",
-]
-
-[[package]]
-name = "public_key"
-version = "0.1.0"
-dependencies = [
- "askar-crypto",
- "base64 0.22.1",
- "bs58",
- "multibase",
- "serde",
- "serde_json",
- "thiserror",
- "unsigned-varint",
 ]
 
 [[package]]
@@ -5134,13 +5134,13 @@ dependencies = [
  "aries_vcx_wallet",
  "async-trait",
  "chrono",
- "did_parser_nom",
  "env_logger 0.11.5",
+ "equs-did-parser-nom",
+ "equs-public-key",
  "indy-ledger-response-parser",
  "indy-vdr-proxy-client",
  "lazy_static",
  "log",
- "public_key",
  "rand",
  "serde_json",
  "thiserror",
@@ -5578,8 +5578,8 @@ dependencies = [
  "aries_vcx_anoncreds",
  "aries_vcx_ledger",
  "async-trait",
- "did_parser_nom",
  "diddoc_legacy",
+ "equs-did-parser-nom",
  "indy-vdr",
  "log",
  "once_cell",

@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-did_resolver = { path = "../../did_resolver" }
+did_resolver = { package = "equs-did-resolver", version = "0.1.0", path = "../../did_resolver" }
 async-trait = "0.1.68"
 serde_json = "1.0.96"
 thiserror = "1.0.40"

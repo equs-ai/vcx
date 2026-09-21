@@ -1,7 +1,13 @@
 [package]
-name = "public_key"
+name = "equs-public-key"
 version = "0.1.0"
 edition = "2021"
+license = "Apache-2.0"
+description = "Public key types with multibase and multicodec conversions"
+repository = "https://github.com/equs-ai/vcx"
+
+[lib]
+name = "public_key"
 
 [features]
 jwk = ["dep:askar-crypto"]

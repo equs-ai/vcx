@@ -1,12 +1,13 @@
 [package]
-name = "display_as_json"
+name = "equs-display-as-json"
 version = "0.1.0"
 edition = "2018"
-authors = ["Your Name <your.email@example.com>"]
 description = "A custom derive macro to implement Display trait as JSON serialization"
+repository = "https://github.com/equs-ai/vcx"
 license = "MIT"
 
 [lib]
+name = "display_as_json"
 proc-macro = true
 
 [dependencies]
