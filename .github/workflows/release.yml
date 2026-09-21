@@ -1,0 +1,78 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "[0-9]+.[0-9]+.[0-9]+"
+      - "[0-9]+.[0-9]+.[0-9]+-*"
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_TERM_VERBOSE: "true"
+  PUBLISH_ORDER: >-
+    did_core/did_parser_nom
+    did_core/public_key
+    misc/display_as_json
+    did_core/did_methods/did_key
+    did_core/did_doc
+    did_core/did_resolver
+    did_core/did_methods/did_peer
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
+
+      - name: Toolchain
+        run: |
+          rustc --version
+          cargo --version
+
+      - name: Release plan
+        run: |
+          for path in $PUBLISH_ORDER; do
+            read -r name version <<<"$(cargo read-manifest --manifest-path "$path/Cargo.toml" | jq -r '"\(.name) \(.version)"')"
+            printf '%-28s %-10s %s\n' "$name" "$version" "$path"
+          done
+
+      - name: Check the tag matches every crate
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          fail=0
+          for path in $PUBLISH_ORDER; do
+            read -r name version <<<"$(cargo read-manifest --manifest-path "$path/Cargo.toml" | jq -r '"\(.name) \(.version)"')"
+            if [ "$version" != "$GITHUB_REF_NAME" ]; then
+              echo "::error::$name is $version, tag is $GITHUB_REF_NAME"
+              fail=1
+            fi
+          done
+          if [ "$fail" -ne 0 ]; then exit 1; fi
+          echo "all crates are at $GITHUB_REF_NAME"
+
+      - name: Test
+        run: |
+          args=""
+          for path in $PUBLISH_ORDER; do
+            name=$(cargo read-manifest --manifest-path "$path/Cargo.toml" | jq -r '.name')
+            args="$args -p $name"
+          done
+          echo "cargo test --verbose$args"
+          # shellcheck disable=SC2086
+          cargo test --verbose $args
+
+      - name: Publish
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.EQUS_CREDENTIALS_SDK_CRATES_IO_TOKEN }}
+        run: |
+          for path in $PUBLISH_ORDER; do
+            name=$(cargo read-manifest --manifest-path "$path/Cargo.toml" | jq -r '.name')
+            echo "::group::publish $name ($path)"
+            cargo publish --verbose --manifest-path "$path/Cargo.toml"
+            echo "::endgroup::"
+          done
