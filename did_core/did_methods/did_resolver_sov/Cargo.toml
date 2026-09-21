@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-did_resolver = { package = "equs-did-resolver", version = "0.1.0", path = "../../did_resolver" }
+did_resolver = { package = "equs-vcx-did-resolver", version = "0.1.0", path = "../../did_resolver" }
 aries_vcx_ledger = { path = "../../../aries/aries_vcx_ledger" }
 async-trait = "0.1.68"
 serde_json = "1.0.96"

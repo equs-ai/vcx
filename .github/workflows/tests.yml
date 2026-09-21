@@ -43,5 +43,5 @@ jobs:
       - name: Run tests
         run: >
           cargo test
-          -p equs-did-doc -p equs-did-peer -p equs-did-key -p equs-did-parser-nom
-          -p equs-did-resolver -p equs-public-key -p equs-display-as-json
+          -p equs-vcx-did-doc -p equs-vcx-did-peer -p equs-vcx-did-key -p equs-vcx-did-parser-nom
+          -p equs-vcx-did-resolver -p equs-vcx-public-key -p equs-vcx-display-as-json
