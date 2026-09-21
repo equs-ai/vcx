@@ -7,9 +7,9 @@ use std::{fmt::Display, str::FromStr};
 
 use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
 
-use crate::{error::DidDocumentBuilderError, schema::types::uri::Uri};
 use crate::schema::service::Endpoint;
 use crate::schema::utils::OneOrList;
+use crate::{error::DidDocumentBuilderError, schema::types::uri::Uri};
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub(crate) struct TypedService<E> {

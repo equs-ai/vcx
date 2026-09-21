@@ -1,12 +1,7 @@
 name: CI
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - "**"
+  workflow_dispatch:
 
 env:
   DOCKER_BUILDKIT: 1

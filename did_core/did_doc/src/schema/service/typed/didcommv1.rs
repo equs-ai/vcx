@@ -4,6 +4,7 @@ use display_as_json::Display;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
+use crate::schema::service::Endpoint;
 use crate::{
     error::DidDocumentBuilderError,
     schema::{
@@ -17,7 +18,6 @@ use crate::{
         utils::OneOrList,
     },
 };
-use crate::schema::service::Endpoint;
 
 #[derive(Serialize, Clone, Debug, PartialEq)]
 pub struct ServiceDidCommV1 {

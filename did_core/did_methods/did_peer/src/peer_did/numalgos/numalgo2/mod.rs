@@ -62,6 +62,10 @@ impl Numalgo for Numalgo2 {
 
 #[cfg(test)]
 mod test {
+    use crate::{
+        peer_did::{numalgos::numalgo2::Numalgo2, PeerDid},
+        resolver::options::PublicKeyEncoding,
+    };
     use did_doc::schema::{
         did_doc::DidDocument, service::service_key_kind::ServiceKeyKind,
         verification_method::PublicKeyField,
@@ -70,10 +74,6 @@ mod test {
     use pretty_assertions::assert_eq;
     use serde_json::{from_value, json};
     use url::Url;
-    use crate::{
-        peer_did::{numalgos::numalgo2::Numalgo2, PeerDid},
-        resolver::options::PublicKeyEncoding,
-    };
 
     #[test]
     fn test_peer_did_2_encode_decode() {

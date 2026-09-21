@@ -1,5 +1,6 @@
 use std::{collections::HashMap, error::Error};
 
+use did_doc::schema::service::Endpoint;
 use did_doc::schema::{
     did_doc::DidDocument,
     service::{typed::ServiceType, Service},
@@ -7,7 +8,6 @@ use did_doc::schema::{
     utils::OneOrList,
     verification_method::{PublicKeyField, VerificationMethod, VerificationMethodType},
 };
-use did_doc::schema::service::Endpoint;
 use did_parser_nom::{Did, DidUrl};
 use did_peer::{
     peer_did::{
@@ -77,7 +77,9 @@ async fn demo_did_peer_2_and_3() -> Result<(), Box<dyn Error>> {
 async fn demo_did_peer_4() -> Result<(), Box<dyn Error>> {
     let service = Service::new(
         Uri::new("#service-0").unwrap(),
-        OneOrList::One(Endpoint::Uri("https://example.com/endpoint".parse().unwrap())),
+        OneOrList::One(Endpoint::Uri(
+            "https://example.com/endpoint".parse().unwrap(),
+        )),
         OneOrList::One(ServiceType::DIDCommV2),
         HashMap::default(),
     );

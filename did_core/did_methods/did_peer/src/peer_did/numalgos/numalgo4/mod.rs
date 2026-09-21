@@ -121,17 +121,17 @@ impl PeerDid<Numalgo4> {
 
 #[cfg(test)]
 mod tests {
-    use std::collections::HashMap;
-    use url::Url;
+    use did_doc::schema::service::Endpoint;
     use did_doc::schema::{
         service::{service_key_kind::ServiceKeyKind, typed::ServiceType, Service},
         types::uri::Uri,
         utils::OneOrList,
         verification_method::{PublicKeyField, VerificationMethodType},
     };
-    use did_doc::schema::service::Endpoint;
     use did_parser_nom::DidUrl;
     use public_key::KeyType;
+    use std::collections::HashMap;
+    use url::Url;
 
     use crate::peer_did::{
         numalgos::numalgo4::{
@@ -155,7 +155,9 @@ mod tests {
     fn test_create_did_peer_4() {
         let service = Service::new(
             Uri::new("#service-0").unwrap(),
-            OneOrList::One(Endpoint::Uri("https://example.com/endpoint".parse().unwrap())),
+            OneOrList::One(Endpoint::Uri(
+                "https://example.com/endpoint".parse().unwrap(),
+            )),
             OneOrList::One(ServiceType::DIDCommV2),
             HashMap::default(),
         );
