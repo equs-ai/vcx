@@ -1,11 +1,17 @@
 [package]
-name = "did_key"
+name = "equs-did-key"
 version = "0.1.0"
 edition = "2021"
+license = "Apache-2.0"
+description = "did:key method implementation"
+repository = "https://github.com/equs-ai/vcx"
+
+[lib]
+name = "did_key"
 
 [dependencies]
-public_key = { path = "../../public_key" }
-did_parser_nom = { path = "../../did_parser_nom" }
+public_key = { package = "equs-public-key", version = "0.1.0", path = "../../public_key" }
+did_parser_nom = { package = "equs-did-parser-nom", version = "0.1.0", path = "../../did_parser_nom" }
 serde = "1.0.175"
 serde_json = "1.0.103"
 thiserror = "1.0.44"

@@ -1,14 +1,20 @@
 [package]
-name = "did_resolver"
+name = "equs-did-resolver"
 version = "0.1.0"
 edition = "2021"
+license = "Apache-2.0"
+description = "DID resolution traits and types"
+repository = "https://github.com/equs-ai/vcx"
+
+[lib]
+name = "did_resolver"
 
 [features]
 default = []
 
 [dependencies]
-did_parser_nom = { path = "../did_parser_nom" }
-did_doc = { path = "../did_doc" }
+did_parser_nom = { package = "equs-did-parser-nom", version = "0.1.0", path = "../did_parser_nom" }
+did_doc = { package = "equs-did-doc", version = "0.1.0", path = "../did_doc" }
 async-trait = "0.1.68"
 chrono = { version = "0.4.24", default-features = false, features = ["serde", "alloc"] }
 serde = { version = "1.0.160", default-features = false, features = ["derive"] }
