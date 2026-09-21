@@ -17,3 +17,7 @@ This is a fork of [openwallet-foundation/vcx](https://github.com/openwallet-foun
 - A `serviceEndpoint` that is not a valid URL is no longer rejected when parsing
   a DID document; it now fails later, on conversion to a `Url`.
 - `chrono`'s `alloc` feature enabled in `did_resolver`.
+- Published under `equs-*` names, since `did_peer`, `did_doc` and `did_key` are
+  taken on crates.io: `equs-did-parser-nom`, `equs-public-key`,
+  `equs-display-as-json`, `equs-did-key`, `equs-did-doc`, `equs-did-resolver`,
+  `equs-did-peer`. Each keeps its old `[lib]` name, so imports are unchanged.
