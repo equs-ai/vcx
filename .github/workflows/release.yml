@@ -37,14 +37,14 @@ jobs:
             name="${GITHUB_REF_NAME%/v*}"
             want="${GITHUB_REF_NAME##*/v}"
           fi
-          manifest=$(cargo metadata --no-deps --format-version 1 \
-            | jq -r --arg n "$name" '.packages[] | select(.name == $n) | .manifest_path')
+          metadata=$(cargo metadata --no-deps --format-version 1)
+          read -r version manifest <<<"$(jq -r --arg n "$name" \
+            '.packages[] | select(.name == $n) | "\(.version) \(.manifest_path)"' <<<"$metadata")"
           if [ -z "$manifest" ]; then
             echo "::error::no crate named $name in this workspace"
-            cargo metadata --no-deps --format-version 1 | jq -r '"  " + .packages[].name' | sort
+            jq -r '"  " + .packages[].name' <<<"$metadata" | sort
             exit 1
           fi
-          version=$(jq -r '.version' <<<"$(cargo read-manifest --manifest-path "$manifest")")
           echo "crate    $name"
           echo "version  $version"
           echo "manifest $manifest"
