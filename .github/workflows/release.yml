@@ -3,24 +3,21 @@ name: release
 on:
   push:
     tags:
-      - "[0-9]+.[0-9]+.[0-9]+"
-      - "[0-9]+.[0-9]+.[0-9]+-*"
+      - "*/v[0-9]+.[0-9]+.[0-9]+"
+      - "*/v[0-9]+.[0-9]+.[0-9]+-*"
   workflow_dispatch:
+    inputs:
+      crate:
+        description: Crate to rehearse, as it appears in Cargo.toml
+        required: true
+        type: string
 
 env:
   CARGO_TERM_COLOR: always
   CARGO_TERM_VERBOSE: "true"
-  PUBLISH_ORDER: >-
-    did_core/did_parser_nom
-    did_core/public_key
-    misc/display_as_json
-    did_core/did_methods/did_key
-    did_core/did_doc
-    did_core/did_resolver
-    did_core/did_methods/did_peer
 
 jobs:
-  verify:
+  release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -28,98 +25,46 @@ jobs:
       - name: Rust Cache
         uses: Swatinem/rust-cache@v2
 
-      - name: Toolchain
+      - name: Resolve the crate
+        id: crate
         run: |
           rustc --version
           cargo --version
-
-      - name: Release plan
-        run: |
-          for path in $PUBLISH_ORDER; do
-            read -r name version <<<"$(cargo read-manifest --manifest-path "$path/Cargo.toml" | jq -r '"\(.name) \(.version)"')"
-            printf '%-28s %-10s %s\n' "$name" "$version" "$path"
-          done
-
-      - name: Check the tag matches every crate
-        if: startsWith(github.ref, 'refs/tags/')
-        run: |
-          fail=0
-          for path in $PUBLISH_ORDER; do
-            read -r name version <<<"$(cargo read-manifest --manifest-path "$path/Cargo.toml" | jq -r '"\(.name) \(.version)"')"
-            if [ "$version" != "$GITHUB_REF_NAME" ]; then
-              echo "::error::$name is $version, tag is $GITHUB_REF_NAME"
-              fail=1
-            fi
-          done
-          if [ "$fail" -ne 0 ]; then exit 1; fi
-          echo "all crates are at $GITHUB_REF_NAME"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            name="${{ inputs.crate }}"
+            want=""
+          else
+            name="${GITHUB_REF_NAME%/v*}"
+            want="${GITHUB_REF_NAME##*/v}"
+          fi
+          manifest=$(cargo metadata --no-deps --format-version 1 \
+            | jq -r --arg n "$name" '.packages[] | select(.name == $n) | .manifest_path')
+          if [ -z "$manifest" ]; then
+            echo "::error::no crate named $name in this workspace"
+            cargo metadata --no-deps --format-version 1 | jq -r '"  " + .packages[].name' | sort
+            exit 1
+          fi
+          version=$(jq -r '.version' <<<"$(cargo read-manifest --manifest-path "$manifest")")
+          echo "crate    $name"
+          echo "version  $version"
+          echo "manifest $manifest"
+          if [ -n "$want" ] && [ "$version" != "$want" ]; then
+            echo "::error::tag says $want, $name is $version"
+            exit 1
+          fi
+          {
+            echo "name=$name"
+            echo "manifest=$manifest"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Test
-        run: |
-          args=""
-          for path in $PUBLISH_ORDER; do
-            name=$(cargo read-manifest --manifest-path "$path/Cargo.toml" | jq -r '.name')
-            args="$args -p $name"
-          done
-          echo "cargo test --verbose$args"
-          # shellcheck disable=SC2086
-          cargo test --verbose $args
+        run: cargo test --verbose -p "${{ steps.crate.outputs.name }}"
 
-  did-parser-nom:
-    needs: verify
-    if: startsWith(github.ref, 'refs/tags/')
-    uses: ./.github/workflows/publish-crate.yml
-    with:
-      path: did_core/did_parser_nom
-    secrets:
-      registry-token: ${{ secrets.EQUS_CREDENTIALS_SDK_CRATES_IO_TOKEN }}
+      - name: Pack and verify
+        run: cargo package --verbose --manifest-path "${{ steps.crate.outputs.manifest }}"
 
-  public-key:
-    needs: verify
-    if: startsWith(github.ref, 'refs/tags/')
-    uses: ./.github/workflows/publish-crate.yml
-    with:
-      path: did_core/public_key
-    secrets:
-      registry-token: ${{ secrets.EQUS_CREDENTIALS_SDK_CRATES_IO_TOKEN }}
-
-  display-as-json:
-    needs: verify
-    if: startsWith(github.ref, 'refs/tags/')
-    uses: ./.github/workflows/publish-crate.yml
-    with:
-      path: misc/display_as_json
-    secrets:
-      registry-token: ${{ secrets.EQUS_CREDENTIALS_SDK_CRATES_IO_TOKEN }}
-
-  did-key:
-    needs: [did-parser-nom, public-key]
-    uses: ./.github/workflows/publish-crate.yml
-    with:
-      path: did_core/did_methods/did_key
-    secrets:
-      registry-token: ${{ secrets.EQUS_CREDENTIALS_SDK_CRATES_IO_TOKEN }}
-
-  did-doc:
-    needs: [did-parser-nom, public-key, display-as-json, did-key]
-    uses: ./.github/workflows/publish-crate.yml
-    with:
-      path: did_core/did_doc
-    secrets:
-      registry-token: ${{ secrets.EQUS_CREDENTIALS_SDK_CRATES_IO_TOKEN }}
-
-  did-resolver:
-    needs: [did-parser-nom, did-doc]
-    uses: ./.github/workflows/publish-crate.yml
-    with:
-      path: did_core/did_resolver
-    secrets:
-      registry-token: ${{ secrets.EQUS_CREDENTIALS_SDK_CRATES_IO_TOKEN }}
-
-  did-peer:
-    needs: [did-parser-nom, public-key, display-as-json, did-doc, did-resolver]
-    uses: ./.github/workflows/publish-crate.yml
-    with:
-      path: did_core/did_methods/did_peer
-    secrets:
-      registry-token: ${{ secrets.EQUS_CREDENTIALS_SDK_CRATES_IO_TOKEN }}
+      - name: Publish
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.EQUS_CREDENTIALS_SDK_CRATES_IO_TOKEN }}
+        run: cargo publish --verbose --manifest-path "${{ steps.crate.outputs.manifest }}"
