@@ -1,0 +1,33 @@
+name: publish-crate
+
+on:
+  workflow_call:
+    inputs:
+      path:
+        required: true
+        type: string
+    secrets:
+      registry-token:
+        required: true
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_TERM_VERBOSE: "true"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
+
+      - name: Publish
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.registry-token }}
+        run: |
+          name=$(cargo read-manifest --manifest-path "${{ inputs.path }}/Cargo.toml" | jq -r '.name')
+          version=$(cargo read-manifest --manifest-path "${{ inputs.path }}/Cargo.toml" | jq -r '.version')
+          echo "publishing $name $version from ${{ inputs.path }}"
+          cargo publish --verbose --manifest-path "${{ inputs.path }}/Cargo.toml"

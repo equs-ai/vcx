@@ -20,7 +20,7 @@ env:
     did_core/did_methods/did_peer
 
 jobs:
-  release:
+  verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -65,14 +65,61 @@ jobs:
           # shellcheck disable=SC2086
           cargo test --verbose $args
 
-      - name: Publish
-        if: startsWith(github.ref, 'refs/tags/')
-        env:
-          CARGO_REGISTRY_TOKEN: ${{ secrets.EQUS_CREDENTIALS_SDK_CRATES_IO_TOKEN }}
-        run: |
-          for path in $PUBLISH_ORDER; do
-            name=$(cargo read-manifest --manifest-path "$path/Cargo.toml" | jq -r '.name')
-            echo "::group::publish $name ($path)"
-            cargo publish --verbose --manifest-path "$path/Cargo.toml"
-            echo "::endgroup::"
-          done
+  did-parser-nom:
+    needs: verify
+    if: startsWith(github.ref, 'refs/tags/')
+    uses: ./.github/workflows/publish-crate.yml
+    with:
+      path: did_core/did_parser_nom
+    secrets:
+      registry-token: ${{ secrets.EQUS_CREDENTIALS_SDK_CRATES_IO_TOKEN }}
+
+  public-key:
+    needs: verify
+    if: startsWith(github.ref, 'refs/tags/')
+    uses: ./.github/workflows/publish-crate.yml
+    with:
+      path: did_core/public_key
+    secrets:
+      registry-token: ${{ secrets.EQUS_CREDENTIALS_SDK_CRATES_IO_TOKEN }}
+
+  display-as-json:
+    needs: verify
+    if: startsWith(github.ref, 'refs/tags/')
+    uses: ./.github/workflows/publish-crate.yml
+    with:
+      path: misc/display_as_json
+    secrets:
+      registry-token: ${{ secrets.EQUS_CREDENTIALS_SDK_CRATES_IO_TOKEN }}
+
+  did-key:
+    needs: [did-parser-nom, public-key]
+    uses: ./.github/workflows/publish-crate.yml
+    with:
+      path: did_core/did_methods/did_key
+    secrets:
+      registry-token: ${{ secrets.EQUS_CREDENTIALS_SDK_CRATES_IO_TOKEN }}
+
+  did-doc:
+    needs: [did-parser-nom, public-key, display-as-json, did-key]
+    uses: ./.github/workflows/publish-crate.yml
+    with:
+      path: did_core/did_doc
+    secrets:
+      registry-token: ${{ secrets.EQUS_CREDENTIALS_SDK_CRATES_IO_TOKEN }}
+
+  did-resolver:
+    needs: [did-parser-nom, did-doc]
+    uses: ./.github/workflows/publish-crate.yml
+    with:
+      path: did_core/did_resolver
+    secrets:
+      registry-token: ${{ secrets.EQUS_CREDENTIALS_SDK_CRATES_IO_TOKEN }}
+
+  did-peer:
+    needs: [did-parser-nom, public-key, display-as-json, did-doc, did-resolver]
+    uses: ./.github/workflows/publish-crate.yml
+    with:
+      path: did_core/did_methods/did_peer
+    secrets:
+      registry-token: ${{ secrets.EQUS_CREDENTIALS_SDK_CRATES_IO_TOKEN }}
