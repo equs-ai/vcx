@@ -77,7 +77,7 @@ jobs:
           skip-vdrproxy-setup: true
       - name: Install prerequisites (sqlx)
         # uses: Swatinem/rust-cache@v2
-        run: cargo install sqlx-cli
+        run: cargo install sqlx-cli --version 0.7.4 --locked --no-default-features --features mysql,rustls
       - name: Setup database
         run: DATABASE_URL=${MYSQL_URL} sqlx migrate run --source aries/agents/mediator/migrations
       - name: "Run mediator integration tests"
