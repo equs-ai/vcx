@@ -5,6 +5,7 @@ edition = "2021"
 license = "Apache-2.0"
 description = "DID and DID URL parser built with nom"
 repository = "https://github.com/equs-ai/vcx"
+exclude = ["tests/"]
 
 [lib]
 name = "did_parser_nom"
