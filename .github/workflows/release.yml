@@ -15,12 +15,17 @@ on:
 env:
   CARGO_TERM_COLOR: always
   CARGO_TERM_VERBOSE: "true"
+  RUSTUP_TOOLCHAIN: stable
+  RUSTFLAGS: ""
 
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        run: rustup toolchain install stable --profile minimal --no-self-update && rustup default stable
 
       - name: Rust Cache
         uses: Swatinem/rust-cache@v2
