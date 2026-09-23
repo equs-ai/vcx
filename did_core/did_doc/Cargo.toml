@@ -18,7 +18,7 @@ bs58 = "0.5.0"
 did_parser_nom = { package = "equs-vcx-did-parser-nom", version = "0.1.0", path = "../did_parser_nom" }
 public_key = { package = "equs-vcx-public-key", version = "0.1.0", path = "../public_key" }
 hex = "0.4.3"
-multibase = "0.9.1"
+multibase = "=0.9.2"
 pem = "3.0.4"
 serde = { version = "1.0.159", default-features = false, features = ["derive"] }
 serde_json = "1.0.95"
