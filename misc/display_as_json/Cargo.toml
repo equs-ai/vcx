@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2018"
 description = "A custom derive macro to implement Display trait as JSON serialization"
 repository = "https://github.com/equs-ai/vcx"
+exclude = ["tests/"]
 license = "MIT"
 
 [lib]
